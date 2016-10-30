@@ -16,8 +16,6 @@ public class BaseDatosPedidos extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        System.out.println("SI ENTRO !!!");//BORRAR
-
         // crear las tablas cliente, producto, cabecera_detalle, detalle_pedido
         db.execSQL("CREATE TABLE IF NOT EXISTS cliente(id_cliente INTEGER PRIMARY KEY," +
                 "nombre TEXT, apellido TEXT, telefono TEXT, direccion TEXT);");
