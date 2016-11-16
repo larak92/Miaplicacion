@@ -25,7 +25,7 @@ public class ActividadPrincipal extends AppCompatActivity {
     public Button btsiguiente;
     public TextView tvdireccion;
     public TextView tvtelefono;
-    public Button btagregar;
+    //public Button btagregar;
     public String f;
     public List<Cliente> clientes;
     private BaseDatosPedidos bdp;
@@ -83,6 +83,7 @@ public class ActividadPrincipal extends AppCompatActivity {
         SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
         f = df.format(c.getTime());
 
+        /*
         // al presionar el boton agregar se crea la cabecera del pedido
         btagregar = (Button)findViewById(R.id.button7);
         btagregar.setOnClickListener(new View.OnClickListener(){
@@ -95,6 +96,7 @@ public class ActividadPrincipal extends AppCompatActivity {
                 Toast.makeText(ActividadPrincipal.this, "Registrado!", Toast.LENGTH_SHORT).show();
             }
         });
+        */
 
         // al presionar el boton siguiente pasa a la siguiente actividad
         btsiguiente = (Button)findViewById(R.id.button2);
@@ -103,6 +105,12 @@ public class ActividadPrincipal extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intento = new Intent(ActividadPrincipal.this, ActividadPedido.class);
                 startActivity(intento);
+                // final
+                ContentValues values = new ContentValues();
+                values.put("id_cliente", clientes.get(spcliente.getSelectedItemPosition()).getIdCliente());
+                values.put("fecha", f);
+                db.insert("cabecera_pedido", null, values);
+                Toast.makeText(ActividadPrincipal.this, "Registrado!", Toast.LENGTH_SHORT).show();
             }
         });
     }
