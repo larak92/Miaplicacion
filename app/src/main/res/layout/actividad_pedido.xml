@@ -117,4 +117,14 @@
         android:id="@+id/textView8"
         android:background="?attr/colorControlHighlight" />
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:layout_below="@+id/button6"
+        android:layout_toRightOf="@+id/textView6"
+        android:layout_toEndOf="@+id/textView6"
+        android:id="@+id/editText" />
+
 </RelativeLayout>

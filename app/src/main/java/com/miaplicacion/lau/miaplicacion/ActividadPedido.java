@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -24,8 +25,11 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
 
     public Spinner spproducto;
     public TextView tvprecio;
-    public TextView tvcantidad;
-    public Button bcantidad;
+
+    //public TextView tvcantidad;
+    //public Button bcantidad;
+    public EditText etcantidad;
+
     public TextView tvtotal;
     public Button bsiguiente;
     public Button bagregar;
@@ -80,9 +84,12 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
         });
 
         // el boton cantidad llama a la funcion del numberpicker con un minimo y maximo
-        bcantidad = (Button)findViewById(R.id.button6);
-        bcantidad.setOnClickListener(this);
-        tvcantidad = (TextView)findViewById(R.id.textView3);
+        //bcantidad = (Button)findViewById(R.id.button6);
+        //bcantidad.setOnClickListener(this);
+        //tvcantidad = (TextView)findViewById(R.id.textView3);
+        etcantidad = (EditText)findViewById(R.id.editText);
+        etcantidad.setOnClickListener(this);
+
         tvtotal = (TextView)findViewById(R.id.textView8);
 
         // traer el id de la cabecera creada en la vista anterior
@@ -98,7 +105,8 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
                 ContentValues values = new ContentValues();
                 values.put("id_cabecera",  idcabecera);
                 values.put("id_producto", productos.get(spproducto.getSelectedItemPosition()).getIdProducto());
-                values.put("cantidad", Integer.parseInt(tvcantidad.getText().toString()));
+                //values.put("cantidad", Integer.parseInt(tvcantidad.getText().toString()));
+                values.put("cantidad", Integer.parseInt(etcantidad.getText().toString()));
                 values.put("precio", Integer.parseInt(tvprecio.getText().toString()));
                 values.put("total", Integer.parseInt(tvtotal.getText().toString()));
                 db.insert("detalle_pedido", null, values);
@@ -132,7 +140,8 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
         NumberPicker.OnValueChangeListener myValChangeListener = new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                tvcantidad.setText(""+newVal);
+                //tvcantidad.setText(""+newVal);
+                etcantidad.setText(""+newVal);
                 tvtotal.setText(""+newVal * Integer.parseInt(tvprecio.getText().toString()));
             }
         };
