@@ -61,6 +61,7 @@ public class ActividadPrincipal extends AppCompatActivity {
 
         // obtenemos una referencia a los controles de la interfaz
         spcliente = (Spinner)findViewById(R.id.spinner2);
+        //spcliente.setPrompt("Seleccione uno");// agregado 18/11
         tvdireccion = (TextView) findViewById(R.id.textView12);
         tvtelefono = (TextView) findViewById(R.id.textView13);
 
