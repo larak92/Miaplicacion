@@ -20,7 +20,7 @@ public class BaseDatosPedidos extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS cliente(id_cliente INTEGER PRIMARY KEY," +
                 "nombre TEXT, apellido TEXT, telefono TEXT, direccion TEXT);");
         db.execSQL("CREATE TABLE IF NOT EXISTS producto(id_producto INTEGER PRIMARY KEY," +
-                "nombre TEXT, precio INTEGER, existencias INTEGER);");
+                "nombre TEXT, precio INTEGER, existencias INTEGER, stock_actual INTEGER);");
         db.execSQL("CREATE TABLE IF NOT EXISTS cabecera_pedido(id_cabecera INTEGER PRIMARY KEY," +
                 "id_cliente INTEGER, fecha TEXT," +
                 "FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente));");
@@ -50,12 +50,14 @@ public class BaseDatosPedidos extends SQLiteOpenHelper {
         valoresp1.put("nombre","Gaseosa Pulp 500 ml");
         valoresp1.put("precio",5000);
         valoresp1.put("existencias",120);
+        valoresp1.put("stock_actual",120);
         db.insert("producto",null,valoresp1);
         ContentValues valoresp2 = new ContentValues();
         valoresp2.put("id_producto",2);
         valoresp2.put("nombre","Galletita Terrabusi 300gr");
         valoresp2.put("precio",3000);
         valoresp2.put("existencias",100);
+        valoresp2.put("stock_actual",100);
         db.insert("producto",null,valoresp2);
     }
     @Override

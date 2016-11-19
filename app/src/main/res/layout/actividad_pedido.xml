@@ -9,7 +9,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:id="@+id/spinner"
-        android:layout_below="@+id/textView" />
+        android:layout_below="@+id/textView"/>
 
     <TextView
         android:text="Producto:"

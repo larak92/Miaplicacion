@@ -14,11 +14,14 @@ public class Producto {
 
     private int existencias;
 
-    public Producto(int idProducto, String nombre, int precio, int existencias) {
+    private int stockactual;
+
+    public Producto(int idProducto, String nombre, int precio, int existencias, int stockactual) {
         this.idProducto = idProducto;
         this.nombre = nombre;
         this.precio = precio;
         this.existencias = existencias;
+        this.stockactual = stockactual;
     }
 
     public int getIdProducto() {
@@ -51,5 +54,13 @@ public class Producto {
 
     public void setExistencias(int existencias) {
         this.existencias = existencias;
+    }
+
+    public int getStockactual() {
+        return stockactual;
+    }
+
+    public void setStockactual(int stockactual) {
+        this.stockactual = stockactual;
     }
 }

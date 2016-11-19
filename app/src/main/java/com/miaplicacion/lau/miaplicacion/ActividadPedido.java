@@ -37,6 +37,7 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
     public List <Producto> productos;
     private BaseDatosPedidos bdp;
     private SQLiteDatabase db;
+    public int resto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,8 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
             String pnombre = cursor.getString(1);
             int pprecio = Integer.parseInt(cursor.getString(2));
             int pexistencia = Integer.parseInt(cursor.getString(3));
-            Producto producto = new Producto(pid, pnombre, pprecio, pexistencia);
+            int pstockactual = Integer.parseInt(cursor.getString(4));
+            Producto producto = new Producto(pid, pnombre, pprecio, pexistencia, pstockactual);
             productos.add(producto);
         }
 
@@ -89,7 +91,6 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
         //tvcantidad = (TextView)findViewById(R.id.textView3);
         etcantidad = (EditText)findViewById(R.id.editText);
         etcantidad.setOnClickListener(this);
-
         tvtotal = (TextView)findViewById(R.id.textView8);
 
         // traer el id de la cabecera creada en la vista anterior
@@ -111,6 +112,9 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
                 values.put("total", Integer.parseInt(tvtotal.getText().toString()));
                 db.insert("detalle_pedido", null, values);
                 Toast.makeText(ActividadPedido.this, "Registrado!", Toast.LENGTH_SHORT).show();
+                // mientras tanto aqui nomas
+                resto = productos.get(spproducto.getSelectedItemPosition()).getStockactual() - Integer.parseInt(etcantidad.getText().toString());
+
             }
         });
 
@@ -135,7 +139,7 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
     // al mismo momento que el numero seleccionado  se multiplica por el precio y este se visualizara en un textview como el total
     private void numberPickerDialog(){
         NumberPicker myNumberPicker = new NumberPicker(this);
-        myNumberPicker.setMaxValue(productos.get(spproducto.getSelectedItemPosition()).getExistencias());
+        myNumberPicker.setMaxValue(productos.get(spproducto.getSelectedItemPosition()).getStockactual());// no es asi nomas
         myNumberPicker.setMinValue(1);
         NumberPicker.OnValueChangeListener myValChangeListener = new NumberPicker.OnValueChangeListener() {
             @Override
