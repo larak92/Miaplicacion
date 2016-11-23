@@ -118,7 +118,7 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
                 ContentValues cv = new ContentValues();
                 cv.put("stock_actual",resto);
                 idproupdate = productos.get(spproducto.getSelectedItemPosition()).getIdProducto();
-                db.update("producto",cv,"_id="+idproupdate,null);
+                db.update("producto",cv,"id_producto ="+idproupdate,null);
             }
         });
 
