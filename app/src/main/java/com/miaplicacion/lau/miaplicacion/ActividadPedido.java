@@ -38,6 +38,7 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
     private BaseDatosPedidos bdp;
     private SQLiteDatabase db;
     public int resto;
+    public int idproupdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +115,10 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
                 Toast.makeText(ActividadPedido.this, "Registrado!", Toast.LENGTH_SHORT).show();
                 // mientras tanto aqui nomas
                 resto = productos.get(spproducto.getSelectedItemPosition()).getStockactual() - Integer.parseInt(etcantidad.getText().toString());
-
+                ContentValues cv = new ContentValues();
+                cv.put("stock_actual",resto);
+                idproupdate = productos.get(spproducto.getSelectedItemPosition()).getIdProducto();
+                db.update("producto",cv,"_id="+idproupdate,null);
             }
         });
 
