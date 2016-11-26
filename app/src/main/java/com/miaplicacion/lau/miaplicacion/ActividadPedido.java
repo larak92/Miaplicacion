@@ -40,6 +40,8 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
     public int resto;
     public int idproupdate;
     public int n;
+    public String valuesspinner [];
+    public int pedidohecho; // funciona como una bandera
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +66,7 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
         }
 
         //para mostrar en el spinner el nombre de los productos
-        String valuesspinner [] = new String[productos.size()+1];
+        valuesspinner = new String[productos.size()+1];
         n=0;
         valuesspinner[n] = "Seleccione una opcion";
         for (int i=0; i<productos.size(); i++){
@@ -119,6 +121,7 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
                 }else if (Integer.parseInt(etcantidad.getText().toString()) == 0){
                     Toast.makeText(ActividadPedido.this, "Error: Debe seleccionar una cantidad.", Toast.LENGTH_SHORT).show();
                 }else{
+                    pedidohecho++;
                     ContentValues values = new ContentValues();
                     values.put("id_cabecera",  idcabecera);
                     values.put("id_producto", productos.get(spproducto.getSelectedItemPosition()-1).getIdProducto());
@@ -134,6 +137,8 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
                     cv.put("stock_actual",resto);// borrar resto cuando se pueda
                     idproupdate = productos.get(spproducto.getSelectedItemPosition()-1).getIdProducto();
                     db.update("producto",cv,"id_producto ="+idproupdate,null);
+                    // limpiar el producto y la cantidad luego de ser agreagado
+
                 }
             }
         });
@@ -147,7 +152,8 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
                     Toast.makeText(ActividadPedido.this, "Error: Debe seleccionar un producto.", Toast.LENGTH_SHORT).show();
                 }else if (Integer.parseInt(etcantidad.getText().toString()) == 0){
                     Toast.makeText(ActividadPedido.this, "Error: Debe seleccionar una cantidad.", Toast.LENGTH_SHORT).show();
-                }else{
+                    // para que al hacer el primer pedido pueda pasar a la tercera vista si NO quiere mas pedidos
+                }else if (pedidohecho > 0){
                     Intent intento =  new Intent(ActividadPedido.this, ActividadRegistrados.class);
                     startActivity(intento);
                     Toast.makeText(ActividadPedido.this, "Pedido registrado con éxito.", Toast.LENGTH_SHORT).show();
