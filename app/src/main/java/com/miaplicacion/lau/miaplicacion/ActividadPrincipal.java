@@ -30,6 +30,7 @@ public class ActividadPrincipal extends AppCompatActivity {
     public List<Cliente> clientes;
     private BaseDatosPedidos bdp;
     private SQLiteDatabase db;
+    public int n;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,9 +55,12 @@ public class ActividadPrincipal extends AppCompatActivity {
         }
 
         // para mostrar en el spinner el nombre+apellido
-        String valuesspinner [] = new String[clientes.size()];
+        String valuesspinner [] = new String[clientes.size()+1];
+        n=0;
+        valuesspinner[n] = "Seleccione una opcion";
         for (int i=0; i<clientes.size(); i++){
-            valuesspinner[i] = clientes.get(i).getNombre() +" "+ clientes.get(i).getApellido();
+            n++;
+            valuesspinner[n] = clientes.get(i).getNombre() +" "+ clientes.get(i).getApellido();
         }
 
         // obtenemos una referencia a los controles de la interfaz
@@ -70,8 +74,13 @@ public class ActividadPrincipal extends AppCompatActivity {
         spcliente.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                tvdireccion.setText(clientes.get(position).getDireccion());
-                tvtelefono.setText(clientes.get(position).getTelefono());
+                if (position == 0 ){
+                    tvdireccion.setText("- -");
+                    tvtelefono.setText("- -");
+                }else{
+                    tvdireccion.setText(clientes.get(position-1).getDireccion());
+                    tvtelefono.setText(clientes.get(position-1).getTelefono());
+                }
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -104,14 +113,18 @@ public class ActividadPrincipal extends AppCompatActivity {
         btsiguiente.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intento = new Intent(ActividadPrincipal.this, ActividadPedido.class);
-                startActivity(intento);
-                // final
-                ContentValues values = new ContentValues();
-                values.put("id_cliente", clientes.get(spcliente.getSelectedItemPosition()).getIdCliente());
-                values.put("fecha", f);
-                db.insert("cabecera_pedido", null, values);
-                Toast.makeText(ActividadPrincipal.this, "Registrado!", Toast.LENGTH_SHORT).show();
+                if (spcliente.getSelectedItemPosition() == 0){
+                    Toast.makeText(ActividadPrincipal.this, "Error: Debe seleccionar un cliente.", Toast.LENGTH_SHORT).show();
+                }else{
+                    Intent intento = new Intent(ActividadPrincipal.this, ActividadPedido.class);
+                    startActivity(intento);
+                    // agrega la cabecera del pedido
+                    ContentValues values = new ContentValues();
+                    values.put("id_cliente", clientes.get(spcliente.getSelectedItemPosition()-1).getIdCliente());
+                    values.put("fecha", f);
+                    db.insert("cabecera_pedido", null, values);
+                    Toast.makeText(ActividadPrincipal.this, "Registrado con éxito!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
