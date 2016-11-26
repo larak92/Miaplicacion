@@ -90,7 +90,9 @@ public class ActividadRegistrados extends Activity{
         batras.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                finish();
+                //finish();
+                Intent intentodos = new Intent(ActividadRegistrados.this, ActividadPedido.class);
+                startActivity(intentodos);
             }
         });
     }
