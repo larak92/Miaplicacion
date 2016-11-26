@@ -123,7 +123,7 @@ public class ActividadPrincipal extends AppCompatActivity {
                     values.put("id_cliente", clientes.get(spcliente.getSelectedItemPosition()-1).getIdCliente());
                     values.put("fecha", f);
                     db.insert("cabecera_pedido", null, values);
-                    Toast.makeText(ActividadPrincipal.this, "Registrado con éxito!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ActividadPrincipal.this, "Cliente registrado con éxito!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
