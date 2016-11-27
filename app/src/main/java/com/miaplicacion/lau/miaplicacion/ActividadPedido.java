@@ -42,6 +42,7 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
     public int n;
     public String valuesspinner [];
     public int pedidohecho; // funciona como una bandera
+    public ArrayAdapter<String> spinnerData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,16 +78,16 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
         // obtenemos una referencia a los controles de la interfaz
         spproducto = (Spinner)findViewById(R.id.spinner);
         tvprecio = (TextView)findViewById(R.id.textView5);
+        tvprecio.setText("- -"); // agregado hoy 26/11
 
         // al seleccionar un producto se aguarda la posicion a lo cual lo utilizamos para acceder a  lista de
         // productos y asi obtener el precio correspondiente al producto
-        spproducto.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item, valuesspinner));
+        spinnerData = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, valuesspinner);
+        spproducto.setAdapter(spinnerData);
         spproducto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                if (position == 0 ){
-                    tvprecio.setText("- -");
-                }else{
+                if (position != 0 ){
                     tvprecio.setText(String.valueOf(productos.get(position-1).getPrecio()));
                 }
             }
@@ -105,6 +106,7 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
         etcantidad.setOnClickListener(this);
         tvtotal = (TextView)findViewById(R.id.textView8);
         tvtotal.setText("0"); // agregado hoy 26/11
+        pedidohecho = 0;
 
         // traer el id de la cabecera creada en la vista anterior
         Cursor cursorid = db.rawQuery("SELECT MAX(id_cabecera) AS cabecera FROM cabecera_pedido", null);
@@ -137,8 +139,11 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
                     cv.put("stock_actual",resto);// borrar resto cuando se pueda
                     idproupdate = productos.get(spproducto.getSelectedItemPosition()-1).getIdProducto();
                     db.update("producto",cv,"id_producto ="+idproupdate,null);
-                    // limpiar el producto y la cantidad luego de ser agreagado
-
+                    // limpiar el producto, precio, cantidad y el total luego de ser agregado
+                    spproducto.setAdapter(spinnerData);
+                    tvprecio.setText("- -");
+                    etcantidad.setText("0");
+                    tvtotal.setText("0");
                 }
             }
         });
@@ -153,7 +158,9 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
                 }else if (Integer.parseInt(etcantidad.getText().toString()) == 0){
                     Toast.makeText(ActividadPedido.this, "Error: Debe seleccionar una cantidad.", Toast.LENGTH_SHORT).show();
                     // para que al hacer el primer pedido pueda pasar a la tercera vista si NO quiere mas pedidos
-                }else if (pedidohecho > 0){
+                }else if (pedidohecho == 0){
+                    Toast.makeText(ActividadPedido.this, "Error: Debe agregar el pedido.", Toast.LENGTH_SHORT).show();
+                }else{
                     Intent intento =  new Intent(ActividadPedido.this, ActividadRegistrados.class);
                     startActivity(intento);
                     Toast.makeText(ActividadPedido.this, "Pedido registrado con éxito.", Toast.LENGTH_SHORT).show();

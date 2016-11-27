@@ -68,16 +68,15 @@ public class ActividadPrincipal extends AppCompatActivity {
         //spcliente.setPrompt("Seleccione uno");// agregado 18/11
         tvdireccion = (TextView) findViewById(R.id.textView12);
         tvtelefono = (TextView) findViewById(R.id.textView13);
+        tvdireccion.setText("- -"); // agregado 26/11
+        tvtelefono.setText("- -");
 
         // al seleccionar al cliente del spinner se muestra la direccion y el telefono
         spcliente.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item, valuesspinner));
         spcliente.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                if (position == 0 ){
-                    tvdireccion.setText("- -");
-                    tvtelefono.setText("- -");
-                }else{
+                if (position != 0 ){
                     tvdireccion.setText(clientes.get(position-1).getDireccion());
                     tvtelefono.setText(clientes.get(position-1).getTelefono());
                 }
