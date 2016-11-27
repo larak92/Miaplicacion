@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -18,8 +19,10 @@ public class ActividadRegistrados extends Activity{
     public ListView lvpedidos;
     public Button bfinalizar;
     public Button batras;
+    public TextView tvmontot;
     public int idcab;
     public int idcli;
+    public int montototal;
     private BaseDatosPedidos bdp;
     private SQLiteDatabase db;
 
@@ -74,6 +77,13 @@ public class ActividadRegistrados extends Activity{
                 lvpedidos.getItemAtPosition(position);
             }
         });
+
+        // TOTAL DEL PEDIDO
+        Cursor c5 = db.rawQuery(String.format("SELECT SUM(total) AS sumat FROM detalle_pedido WHERE id_cabecera = %s;", idcab), null);
+        c5.moveToFirst();
+        montototal = c5.getInt(c5.getColumnIndex("sumat"));
+        tvmontot = (TextView)findViewById(R.id.textView16);
+        tvmontot.setText(String.valueOf(montototal));
 
         // al presionar el boton finalizar pasa a la primera actividad
         bfinalizar = (Button)findViewById(R.id.button5);
