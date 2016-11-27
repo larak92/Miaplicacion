@@ -25,11 +25,7 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
 
     public Spinner spproducto;
     public TextView tvprecio;
-
-    //public TextView tvcantidad;
-    //public Button bcantidad;
     public EditText etcantidad;
-
     public TextView tvtotal;
     public Button bsiguiente;
     public Button bagregar;
@@ -99,16 +95,11 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
             }
         });
 
-        // el boton cantidad llama a la funcion del numberpicker con un minimo y maximo
-        //bcantidad = (Button)findViewById(R.id.button6);
-        //bcantidad.setOnClickListener(this);
-        //tvcantidad = (TextView)findViewById(R.id.textView3);
         etcantidad = (EditText)findViewById(R.id.editText);
         etcantidad.setText("0"); // agregado hoy 26/11
         etcantidad.setOnClickListener(this);
         tvtotal = (TextView)findViewById(R.id.textView8);
         tvtotal.setText("0"); // agregado hoy 26/11
-
 
         // traer el id de la cabecera creada en la vista anterior
         Cursor cursorid = db.rawQuery("SELECT MAX(id_cabecera) AS cabecera FROM cabecera_pedido", null);
@@ -126,25 +117,37 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
                     Toast.makeText(ActividadPedido.this, "Error: Debe seleccionar una cantidad.", Toast.LENGTH_SHORT).show();
                 }else{
                     pedidohecho++;
-                    ContentValues values = new ContentValues();
-                    values.put("id_cabecera",  idcabecera);
-                    values.put("id_producto", productos.get(spproducto.getSelectedItemPosition()-1).getIdProducto());
-                    values.put("cantidad", Integer.parseInt(etcantidad.getText().toString()));
-                    values.put("precio", Integer.parseInt(tvprecio.getText().toString()));
-                    values.put("total", Integer.parseInt(tvtotal.getText().toString()));
-                    db.insert("detalle_pedido", null, values);
-                    Toast.makeText(ActividadPedido.this, "Producto registrado con éxito!", Toast.LENGTH_SHORT).show();
+                    db.beginTransaction();
+                    try{
+                        ContentValues values = new ContentValues();
+                        values.put("id_cabecera",  idcabecera);
+                        values.put("id_producto", productos.get(spproducto.getSelectedItemPosition()-1).getIdProducto());
+                        values.put("cantidad", Integer.parseInt(etcantidad.getText().toString()));
+                        values.put("precio", Integer.parseInt(tvprecio.getText().toString()));
+                        values.put("total", Integer.parseInt(tvtotal.getText().toString()));
+                        db.insert("detalle_pedido", null, values);
+                        db.setTransactionSuccessful();
+                    }finally {
+                        db.endTransaction();
+                        Toast.makeText(ActividadPedido.this, "Producto registrado con éxito!", Toast.LENGTH_SHORT).show();
+                    }
                     // Actualizar el stock_actual
-                    resto = productos.get(spproducto.getSelectedItemPosition()-1).getStockactual() - Integer.parseInt(etcantidad.getText().toString());
-                    ContentValues cv = new ContentValues();
-                    cv.put("stock_actual",resto);// borrar resto cuando se pueda
-                    idproupdate = productos.get(spproducto.getSelectedItemPosition()-1).getIdProducto();
-                    db.update("producto",cv,"id_producto ="+idproupdate,null);
+                    db.beginTransaction();
+                    try{
+                        resto = productos.get(spproducto.getSelectedItemPosition()-1).getStockactual() - Integer.parseInt(etcantidad.getText().toString());
+                        productos.get(spproducto.getSelectedItemPosition()-1).setStockactual(resto);//guardando en el array
+                        ContentValues cv = new ContentValues();
+                        cv.put("stock_actual",resto);// guardando en el db
+                        idproupdate = productos.get(spproducto.getSelectedItemPosition()-1).getIdProducto();
+                        db.update("producto",cv,"id_producto ="+idproupdate,null);
+                        db.setTransactionSuccessful();
+                    }finally {
+                        db.endTransaction();
+                    }
                     // limpiar el producto, precio, cantidad y el total luego de ser agregado
                     spproducto.setAdapter(spinnerData);
                     tvprecio.setText("- -");
                     etcantidad.setText("0");
-                    etcantidad.setOnClickListener(this);// ?????
                     tvtotal.setText("0");
                 }
             }
@@ -175,14 +178,9 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
 
     @Override
     public void onClick(View view){
-        numberPickerDialog();
-    }
-
-    // al seleccionar un numero en el numberpicker este se visualizara en un textview como la cantidad
-    // al mismo momento que el numero seleccionado  se multiplica por el precio y este se visualizara en un textview como el total
-    private void numberPickerDialog(){
+        //numberPickerDialog();
         NumberPicker myNumberPicker = new NumberPicker(this);
-        myNumberPicker.setMaxValue(productos.get(spproducto.getSelectedItemPosition()-1).getStockactual());// no es asi nomas
+        myNumberPicker.setMaxValue(productos.get(spproducto.getSelectedItemPosition()-1).getStockactual());// PROBLEMA
         myNumberPicker.setMinValue(1);
         NumberPicker.OnValueChangeListener myValChangeListener = new NumberPicker.OnValueChangeListener() {
             @Override
@@ -203,4 +201,8 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
         });
         builder.show();
     }
+
+    // al seleccionar un numero en el numberpicker este se visualizara en un textview como la cantidad
+    // al mismo momento que el numero seleccionado  se multiplica por el precio y este se visualizara en un textview como el total
+    //private void numberPickerDialog(){}
 }
