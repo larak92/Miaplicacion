@@ -49,15 +49,15 @@ public class BaseDatosPedidos extends SQLiteOpenHelper {
         valoresp1.put("id_producto",1);
         valoresp1.put("nombre","Gaseosa Pulp 500 ml");
         valoresp1.put("precio",5000);
-        valoresp1.put("existencias",120);
-        valoresp1.put("stock_actual",120);
+        valoresp1.put("existencias",12);
+        valoresp1.put("stock_actual",12);
         db.insert("producto",null,valoresp1);
         ContentValues valoresp2 = new ContentValues();
         valoresp2.put("id_producto",2);
         valoresp2.put("nombre","Galletita Terrabusi 300gr");
         valoresp2.put("precio",3000);
-        valoresp2.put("existencias",100);
-        valoresp2.put("stock_actual",100);
+        valoresp2.put("existencias",10);
+        valoresp2.put("stock_actual",10);
         db.insert("producto",null,valoresp2);
     }
     @Override

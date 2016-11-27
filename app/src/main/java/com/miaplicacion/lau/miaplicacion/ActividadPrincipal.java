@@ -115,14 +115,14 @@ public class ActividadPrincipal extends AppCompatActivity {
                 if (spcliente.getSelectedItemPosition() == 0){
                     Toast.makeText(ActividadPrincipal.this, "Error: Debe seleccionar un cliente.", Toast.LENGTH_SHORT).show();
                 }else{
-                    Intent intento = new Intent(ActividadPrincipal.this, ActividadPedido.class);
-                    startActivity(intento);
+                    Toast.makeText(ActividadPrincipal.this, "Cliente registrado con éxito!", Toast.LENGTH_SHORT).show();
                     // agrega la cabecera del pedido
                     ContentValues values = new ContentValues();
                     values.put("id_cliente", clientes.get(spcliente.getSelectedItemPosition()-1).getIdCliente());
                     values.put("fecha", f);
                     db.insert("cabecera_pedido", null, values);
-                    Toast.makeText(ActividadPrincipal.this, "Cliente registrado con éxito!", Toast.LENGTH_SHORT).show();
+                    Intent intento = new Intent(ActividadPrincipal.this, ActividadPedido.class);
+                    startActivity(intento);
                 }
             }
         });

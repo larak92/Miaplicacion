@@ -53,6 +53,7 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
         setContentView(R.layout.actividad_pedido);
 
         // traer todas las filas de la tabla producto, instanciar en objetos y almacenarlos en una lista
+        pedidohecho = 0;
         productos = new ArrayList<>();
         String query = "SELECT * FROM producto;";
         Cursor cursor = db.rawQuery(query, null);
@@ -89,6 +90,7 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
                 if (position != 0 ){
                     tvprecio.setText(String.valueOf(productos.get(position-1).getPrecio()));
+                    pedidohecho = 0;
                 }
             }
             @Override
@@ -106,7 +108,7 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
         etcantidad.setOnClickListener(this);
         tvtotal = (TextView)findViewById(R.id.textView8);
         tvtotal.setText("0"); // agregado hoy 26/11
-        pedidohecho = 0;
+
 
         // traer el id de la cabecera creada en la vista anterior
         Cursor cursorid = db.rawQuery("SELECT MAX(id_cabecera) AS cabecera FROM cabecera_pedido", null);
@@ -127,7 +129,6 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
                     ContentValues values = new ContentValues();
                     values.put("id_cabecera",  idcabecera);
                     values.put("id_producto", productos.get(spproducto.getSelectedItemPosition()-1).getIdProducto());
-                    //values.put("cantidad", Integer.parseInt(tvcantidad.getText().toString()));
                     values.put("cantidad", Integer.parseInt(etcantidad.getText().toString()));
                     values.put("precio", Integer.parseInt(tvprecio.getText().toString()));
                     values.put("total", Integer.parseInt(tvtotal.getText().toString()));
@@ -143,6 +144,7 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
                     spproducto.setAdapter(spinnerData);
                     tvprecio.setText("- -");
                     etcantidad.setText("0");
+                    etcantidad.setOnClickListener(this);// ?????
                     tvtotal.setText("0");
                 }
             }
@@ -153,17 +155,18 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
         bsiguiente.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                if (spproducto.getSelectedItemPosition() == 0){
-                    Toast.makeText(ActividadPedido.this, "Error: Debe seleccionar un producto.", Toast.LENGTH_SHORT).show();
-                }else if (Integer.parseInt(etcantidad.getText().toString()) == 0){
-                    Toast.makeText(ActividadPedido.this, "Error: Debe seleccionar una cantidad.", Toast.LENGTH_SHORT).show();
-                    // para que al hacer el primer pedido pueda pasar a la tercera vista si NO quiere mas pedidos
-                }else if (pedidohecho == 0){
+                if(spproducto.getSelectedItemPosition() == 0 && Integer.parseInt(etcantidad.getText().toString()) == 0 && pedidohecho ==0){
+                    Toast.makeText(ActividadPedido.this, "Error: Campos obligatorios faltantes.", Toast.LENGTH_SHORT).show();
+                }else if ((spproducto.getSelectedItemPosition() == 0 || Integer.parseInt(etcantidad.getText().toString()) == 0) && pedidohecho ==0){
+                    Toast.makeText(ActividadPedido.this, "Error: Campos obligatorios faltantes.", Toast.LENGTH_SHORT).show();
+                }
+                if (spproducto.getSelectedItemPosition() != 0 && Integer.parseInt(etcantidad.getText().toString()) != 0 && pedidohecho ==0){
                     Toast.makeText(ActividadPedido.this, "Error: Debe agregar el pedido.", Toast.LENGTH_SHORT).show();
-                }else{
+                }
+                if (spproducto.getSelectedItemPosition() == 0 && Integer.parseInt(etcantidad.getText().toString()) == 0 && pedidohecho >0){
+                    Toast.makeText(ActividadPedido.this, "Ha finalizado el pedido.", Toast.LENGTH_SHORT).show();
                     Intent intento =  new Intent(ActividadPedido.this, ActividadRegistrados.class);
                     startActivity(intento);
-                    Toast.makeText(ActividadPedido.this, "Pedido registrado con éxito.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -187,6 +190,7 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
                 //tvcantidad.setText(""+newVal);
                 etcantidad.setText(""+newVal);
                 tvtotal.setText(""+newVal * Integer.parseInt(tvprecio.getText().toString()));
+                pedidohecho = 0;
             }
         };
         myNumberPicker.setOnValueChangedListener(myValChangeListener);
