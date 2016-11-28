@@ -90,8 +90,9 @@ public class ActividadPrincipal extends AppCompatActivity {
         SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
         f = df.format(c.getTime());
 
-        // mientras no seleccione un cliente y presione el boton, no podra pasar a la siguiente actividad
-        // al seleccionar un cliente y presionar el boton, se crea la cabecera del pedido y pasa a la siguiente actividad
+        // al presionar el boton siguiente pasa a la siguiente actividad
+        // mientras no seleccione un cliente, no podra pasar a la siguiente actividad
+        // al seleccionar un cliente se crea la cabecera del pedido
         btsiguiente = (Button)findViewById(R.id.button2);
         btsiguiente.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,18 +100,12 @@ public class ActividadPrincipal extends AppCompatActivity {
                 if (spcliente.getSelectedItemPosition() == 0){
                     Toast.makeText(ActividadPrincipal.this, "Error: Debe seleccionar un cliente.", Toast.LENGTH_SHORT).show();
                 }else{
+                    Toast.makeText(ActividadPrincipal.this, "Cliente registrado con éxito!", Toast.LENGTH_SHORT).show();
                     // agrega la cabecera del pedido
-                    db.beginTransaction();
-                    try{
-                        ContentValues values = new ContentValues();
-                        values.put("id_cliente", clientes.get(spcliente.getSelectedItemPosition()-1).getIdCliente());
-                        values.put("fecha", f);
-                        db.insert("cabecera_pedido", null, values);
-                        db.setTransactionSuccessful();
-                    }finally {
-                        db.endTransaction();
-                        Toast.makeText(ActividadPrincipal.this, "Cliente registrado con éxito!", Toast.LENGTH_SHORT).show();
-                    }
+                    ContentValues values = new ContentValues();
+                    values.put("id_cliente", clientes.get(spcliente.getSelectedItemPosition()-1).getIdCliente());
+                    values.put("fecha", f);
+                    db.insert("cabecera_pedido", null, values);
                     // pasa a la siguiente actividad
                     Intent intento = new Intent(ActividadPrincipal.this, ActividadPedido.class);
                     startActivity(intento);
