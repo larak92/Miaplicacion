@@ -66,7 +66,7 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
         //para mostrar en el spinner el nombre de los productos
         valuesspinner = new String[productos.size()+1];
         n=0;
-        valuesspinner[n] = "Seleccione una opcion";
+        valuesspinner[n] = "Seleccione una opción";
         for (int i=0; i<productos.size(); i++){
             n++;
             valuesspinner[n] = productos.get(i).getNombre();
@@ -88,6 +88,8 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
                 if (position != 0 ){
                     tvprecio.setText(String.valueOf(productos.get(position-1).getPrecio()));
                     pedidohecho = 0;
+                }else{
+                    tvprecio.setText("- -");
                 }
             }
             @Override

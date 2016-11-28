@@ -62,7 +62,7 @@ public class BaseDatosPedidos extends SQLiteOpenHelper {
         db.insert("producto",null,valoresp2);
         ContentValues valoresp3 = new ContentValues();
         valoresp3.put("id_producto",3);
-        valoresp3.put("nombre","Pringles Original Lata 140 gr");
+        valoresp3.put("nombre","Pringles Original 140 gr");
         valoresp3.put("precio",9000);
         valoresp3.put("existencias",15);
         valoresp3.put("stock_actual",15);

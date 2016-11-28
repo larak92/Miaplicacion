@@ -77,6 +77,9 @@ public class ActividadPrincipal extends AppCompatActivity {
                 if (position != 0 ){
                     tvdireccion.setText(clientes.get(position-1).getDireccion());
                     tvtelefono.setText(clientes.get(position-1).getTelefono());
+                }else{
+                    tvdireccion.setText("- -");
+                    tvtelefono.setText("- -");
                 }
             }
             @Override
