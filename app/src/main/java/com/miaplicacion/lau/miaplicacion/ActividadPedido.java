@@ -38,6 +38,7 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
     public int n;
     public String valuesspinner [];
     public int pedidohecho;
+    public int cantidadinicial;
     public ArrayAdapter<String> spinnerData;
 
     @Override
@@ -130,32 +131,29 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
                 }else{
                     // agrega el detalle del pedido
                     pedidohecho++;
-                    db.beginTransaction();
-                    try{
-                        ContentValues values = new ContentValues();
-                        values.put("id_cabecera",  idcabecera);
-                        values.put("id_producto", productos.get(spproducto.getSelectedItemPosition()-1).getIdProducto());
-                        values.put("cantidad", Integer.parseInt(etcantidad.getText().toString()));
-                        values.put("precio", Integer.parseInt(tvprecio.getText().toString()));
-                        values.put("total", Integer.parseInt(tvtotal.getText().toString()));
-                        db.insert("detalle_pedido", null, values);
-                        db.setTransactionSuccessful();
-                    }finally {
-                        db.endTransaction();
-                        Toast.makeText(ActividadPedido.this, "Producto registrado con éxito!", Toast.LENGTH_SHORT).show();
-                    }
+                    ContentValues values = new ContentValues();
+                    values.put("id_cabecera",  idcabecera);
+                    values.put("id_producto", productos.get(spproducto.getSelectedItemPosition()-1).getIdProducto());
+                    values.put("cantidad", Integer.parseInt(etcantidad.getText().toString()));
+                    values.put("precio", Integer.parseInt(tvprecio.getText().toString()));
+                    values.put("total", Integer.parseInt(tvtotal.getText().toString()));
+                    db.insert("detalle_pedido", null, values);
+                    Toast.makeText(ActividadPedido.this, "Producto registrado con éxito!", Toast.LENGTH_SHORT).show();
+
                     // Actualizar el stock_actual
-                    db.beginTransaction();
-                    try{
-                        resto = productos.get(spproducto.getSelectedItemPosition()-1).getStockactual() - Integer.parseInt(etcantidad.getText().toString());
-                        productos.get(spproducto.getSelectedItemPosition()-1).setStockactual(resto);//guardando en el array
-                        ContentValues cv = new ContentValues();
-                        cv.put("stock_actual",resto);// guardando en el db
-                        idproupdate = productos.get(spproducto.getSelectedItemPosition()-1).getIdProducto();
-                        db.update("producto",cv,"id_producto ="+idproupdate,null);
-                        db.setTransactionSuccessful();
-                    }finally {
-                        db.endTransaction();
+                    idproupdate = productos.get(spproducto.getSelectedItemPosition()-1).getIdProducto();
+                    resto = productos.get(spproducto.getSelectedItemPosition()-1).getStockactual() - Integer.parseInt(etcantidad.getText().toString());
+                    productos.get(spproducto.getSelectedItemPosition()-1).setStockactual(resto);//guardando en el array
+                    ContentValues cv = new ContentValues();
+                    cv.put("stock_actual",resto);// guardando en el db
+                    db.update("producto",cv,"id_producto ="+idproupdate,null);
+
+                    // si el stock_actual llega a cero entonces se recarga con la existencia inicial
+                    if ( productos.get(spproducto.getSelectedItemPosition()-1).getStockactual() ==0){
+                        cantidadinicial = productos.get(spproducto.getSelectedItemPosition()-1).getExistencias();
+                        ContentValues cvstock = new ContentValues();
+                        cvstock.put("stock_actual",cantidadinicial);
+                        db.update("producto",cvstock,"id_producto ="+idproupdate,null);
                     }
                     // limpiar el producto, precio, cantidad y el total luego de ser agregado
                     spproducto.setAdapter(spinnerData);
