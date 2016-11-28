@@ -56,7 +56,31 @@ public class ActividadRegistrados extends Activity{
         item += "Cliente: " + c3.getString(0) + " "+c3.getString(1) + "\r\n";
         listaDatos.add(item);
         item = "";
-        // obtenemos todos los detalles del pedido del cliente
+
+        // **** 28/11
+        //Cuenta con dos nombres de productos
+        ArrayList<String> nombresp = new ArrayList<String>();
+        Cursor cp = db.rawQuery(String.format("SELECT nombre FROM producto;"), null);
+        while (cp.moveToNext()){
+            nombresp.add(cp.getString(0));
+        }
+        Cursor c4 = db.rawQuery(String.format("SELECT id_producto, cantidad, precio, total FROM detalle_pedido WHERE id_cabecera = %s;", idcab), null);
+        while (c4.moveToNext()){
+            String did = c4.getString(0);
+            if (did.equals("1")){
+                did = nombresp.get(0); // producto n. 1
+            }else{
+                did = nombresp.get(1); // producto n. 2
+            }
+            item += "Nombre Producto: " + did + "\r\n";
+            item += "Cantidad: " + c4.getString(1) + "\r\n";
+            item += "Precio Gs.: " + c4.getString(2) + "\r\n";
+            item += "Total Gs.: " + c4.getString(3) + "";
+            listaDatos.add(item);
+            item = "";
+        }
+
+        /* obtenemos todos los detalles del pedido del cliente
         Cursor c4 = db.rawQuery(String.format("SELECT id_producto, cantidad, precio, total FROM detalle_pedido WHERE id_cabecera = %s;", idcab), null);
         while (c4.moveToNext()){
             item += "Codigo Producto: " + c4.getString(0) + "\r\n";
@@ -65,7 +89,7 @@ public class ActividadRegistrados extends Activity{
             item += "Total Gs.: " + c4.getString(3) + "";
             listaDatos.add(item);
             item = "";
-        }
+        }*/
 
         // se obtiene una referencia al control de la interfaz para luego mostrar en el listview los pedidos realizados
         lvpedidos = (ListView)findViewById(R.id.listview1);
