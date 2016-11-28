@@ -30,7 +30,7 @@ public class BaseDatosPedidos extends SQLiteOpenHelper {
                 "FOREIGN KEY (id_cabecera) REFERENCES cabecera_pedido(id_cabecera)," +
                 "FOREIGN KEY (id_producto) REFERENCES producto(id_producto));");
 
-        // cargar tablas cliente y producto
+        // cargar tabla cliente
         ContentValues valoresc1 = new ContentValues();
         valoresc1.put("id_cliente",1);
         valoresc1.put("nombre","Charlize");
@@ -45,6 +45,7 @@ public class BaseDatosPedidos extends SQLiteOpenHelper {
         valoresc2.put("telefono","0981988880");
         valoresc2.put("direccion","Avda Brasil");
         db.insert("cliente",null,valoresc2);
+        // cargar tabla producto
         ContentValues valoresp1 = new ContentValues();
         valoresp1.put("id_producto",1);
         valoresp1.put("nombre","Gaseosa Pulp 500 ml");
@@ -59,6 +60,13 @@ public class BaseDatosPedidos extends SQLiteOpenHelper {
         valoresp2.put("existencias",10);
         valoresp2.put("stock_actual",10);
         db.insert("producto",null,valoresp2);
+        ContentValues valoresp3 = new ContentValues();
+        valoresp3.put("id_producto",3);
+        valoresp3.put("nombre","Pringles Original Lata 140 gr");
+        valoresp3.put("precio",9000);
+        valoresp3.put("existencias",15);
+        valoresp3.put("stock_actual",15);
+        db.insert("producto",null,valoresp3);
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

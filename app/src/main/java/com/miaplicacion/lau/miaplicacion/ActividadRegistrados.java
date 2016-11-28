@@ -70,8 +70,11 @@ public class ActividadRegistrados extends Activity{
             String did = c4.getString(0);
             if (did.equals("1")){
                 did = nombresp.get(0); // producto n. 1
-            }else{
+            }
+            if (did.equals("2")){
                 did = nombresp.get(1); // producto n. 2
+            }else{
+                did = nombresp.get(2); // producto n. 3
             }
             item += "Nombre Producto: " + did + "\r\n";
             item += "Cantidad: " + c4.getString(1) + "\r\n";
