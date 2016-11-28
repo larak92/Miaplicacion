@@ -57,13 +57,14 @@ public class ActividadRegistrados extends Activity{
         listaDatos.add(item);
         item = "";
 
-        // **** 28/11
-        //Cuenta con dos nombres de productos
+        // Obtenemos los nombres de productos para reemplazarlos por el codigo
         ArrayList<String> nombresp = new ArrayList<String>();
         Cursor cp = db.rawQuery(String.format("SELECT nombre FROM producto;"), null);
         while (cp.moveToNext()){
             nombresp.add(cp.getString(0));
         }
+
+        //obtenemos todos los detalles del pedido del cliente
         Cursor c4 = db.rawQuery(String.format("SELECT id_producto, cantidad, precio, total FROM detalle_pedido WHERE id_cabecera = %s;", idcab), null);
         while (c4.moveToNext()){
             String did = c4.getString(0);
@@ -80,17 +81,6 @@ public class ActividadRegistrados extends Activity{
             item = "";
         }
 
-        /* obtenemos todos los detalles del pedido del cliente
-        Cursor c4 = db.rawQuery(String.format("SELECT id_producto, cantidad, precio, total FROM detalle_pedido WHERE id_cabecera = %s;", idcab), null);
-        while (c4.moveToNext()){
-            item += "Codigo Producto: " + c4.getString(0) + "\r\n";
-            item += "Cantidad: " + c4.getString(1) + "\r\n";
-            item += "Precio Gs.: " + c4.getString(2) + "\r\n";
-            item += "Total Gs.: " + c4.getString(3) + "";
-            listaDatos.add(item);
-            item = "";
-        }*/
-
         // se obtiene una referencia al control de la interfaz para luego mostrar en el listview los pedidos realizados
         lvpedidos = (ListView)findViewById(R.id.listview1);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, listaDatos);
@@ -102,7 +92,7 @@ public class ActividadRegistrados extends Activity{
             }
         });
 
-        // TOTAL DEL PEDIDO
+        // Sumamos el total del pedido para luego mostrarlo en un textview
         Cursor c5 = db.rawQuery(String.format("SELECT SUM(total) AS sumat FROM detalle_pedido WHERE id_cabecera = %s;", idcab), null);
         c5.moveToFirst();
         montototal = c5.getInt(c5.getColumnIndex("sumat"));

@@ -37,7 +37,7 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
     public int idproupdate;
     public int n;
     public String valuesspinner [];
-    public int pedidohecho; // funciona como una bandera
+    public int pedidohecho;
     public ArrayAdapter<String> spinnerData;
 
     @Override
@@ -75,10 +75,11 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
         // obtenemos una referencia a los controles de la interfaz
         spproducto = (Spinner)findViewById(R.id.spinner);
         tvprecio = (TextView)findViewById(R.id.textView5);
-        tvprecio.setText("- -"); // agregado hoy 26/11
+        tvprecio.setText("- -");
 
         // al seleccionar un producto se aguarda la posicion a lo cual lo utilizamos para acceder a  lista de
         // productos y asi obtener el precio correspondiente al producto
+        // obs: si la posicion es cero no se muestra ningun dato
         spinnerData = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, valuesspinner);
         spproducto.setAdapter(spinnerData);
         spproducto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
@@ -95,18 +96,27 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
             }
         });
 
+        // obtenemos una referencia a los controles de la interfaz
         etcantidad = (EditText)findViewById(R.id.editText);
-        etcantidad.setText("0"); // agregado hoy 26/11
+        etcantidad.setText("0");
         etcantidad.setOnClickListener(this);
         tvtotal = (TextView)findViewById(R.id.textView8);
-        tvtotal.setText("0"); // agregado hoy 26/11
+        tvtotal.setText("0");
 
         // traer el id de la cabecera creada en la vista anterior
         Cursor cursorid = db.rawQuery("SELECT MAX(id_cabecera) AS cabecera FROM cabecera_pedido", null);
         cursorid.moveToFirst();
         idcabecera = cursorid.getInt( cursorid.getColumnIndex("cabecera"));
 
-        // al presionar el boton agregar se crea el detalle del pedido
+        /*
+        Al presionar el boton agregar se evaluan las siguientes condiciones:
+        1. No selecciono nada, no podra agregar el pedido
+        2. Al seleccionar un producto pero no la cantidad, no podra agregar el pedido
+        3. Al seleccionar un producto y la cantidad pero no agregar, no podra pasar a la siguiente vista
+        4. Al seleccionar un producto, la cantidad y agregar, el selector vuelve a su valor por defecto (sin seleccion) y
+            la cantidad (cero)
+        5. Al agregar un producto se podra realizar otro pedido o pasar a la siguiente vista
+         */
         bagregar = (Button)findViewById(R.id.button);
         bagregar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,6 +126,7 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
                 }else if (Integer.parseInt(etcantidad.getText().toString()) == 0){
                     Toast.makeText(ActividadPedido.this, "Error: Debe seleccionar una cantidad.", Toast.LENGTH_SHORT).show();
                 }else{
+                    // agrega el detalle del pedido
                     pedidohecho++;
                     db.beginTransaction();
                     try{
@@ -153,7 +164,14 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
             }
         });
 
-        // al presionar el boton siguiente pasa a la siguiente actividad
+        /*
+        Al presionar el boton siguiente se evaluan las siguientes condiciones:
+        1. No selecciono nada, no podra pasar a la siguiente vista
+        2. Al seleccionar un producto pero no la cantidad, no podra pasar a la siguiente vista
+        3. Al seleccionar un producto y la cantidad pero no agregar, no podra pasar a la siguiente vista
+        4. Aumenta el contador de pedidohecho al agregar correctamente el pedido
+        5. Al agregar un producto se podra pasar a la siguiente vista
+         */
         bsiguiente = (Button)findViewById(R.id.button3);
         bsiguiente.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -176,11 +194,13 @@ public class ActividadPedido extends Activity implements View.OnClickListener{
 
     }
 
+    // al seleccionar un numero en el numberpicker este se visualizara en un edittext como la cantidad
+    // al mismo momento que el numero seleccionado  se multiplica por el precio y este se visualizara en un textview como el total
     @Override
     public void onClick(View view){
         //numberPickerDialog();
         NumberPicker myNumberPicker = new NumberPicker(this);
-        myNumberPicker.setMaxValue(productos.get(spproducto.getSelectedItemPosition()-1).getStockactual());// PROBLEMA
+        myNumberPicker.setMaxValue(productos.get(spproducto.getSelectedItemPosition()-1).getStockactual());
         myNumberPicker.setMinValue(1);
         NumberPicker.OnValueChangeListener myValChangeListener = new NumberPicker.OnValueChangeListener() {
             @Override

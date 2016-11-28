@@ -25,7 +25,6 @@ public class ActividadPrincipal extends AppCompatActivity {
     public Button btsiguiente;
     public TextView tvdireccion;
     public TextView tvtelefono;
-    //public Button btagregar;
     public String f;
     public List<Cliente> clientes;
     private BaseDatosPedidos bdp;
@@ -57,7 +56,7 @@ public class ActividadPrincipal extends AppCompatActivity {
         // para mostrar en el spinner el nombre+apellido
         String valuesspinner [] = new String[clientes.size()+1];
         n=0;
-        valuesspinner[n] = "Seleccione una opcion";
+        valuesspinner[n] = "Seleccione una opción";
         for (int i=0; i<clientes.size(); i++){
             n++;
             valuesspinner[n] = clientes.get(i).getNombre() +" "+ clientes.get(i).getApellido();
@@ -65,13 +64,12 @@ public class ActividadPrincipal extends AppCompatActivity {
 
         // obtenemos una referencia a los controles de la interfaz
         spcliente = (Spinner)findViewById(R.id.spinner2);
-        //spcliente.setPrompt("Seleccione uno");// agregado 18/11
         tvdireccion = (TextView) findViewById(R.id.textView12);
         tvtelefono = (TextView) findViewById(R.id.textView13);
-        tvdireccion.setText("- -"); // agregado 26/11
+        tvdireccion.setText("- -");
         tvtelefono.setText("- -");
 
-        // al seleccionar al cliente del spinner se muestra la direccion y el telefono
+        // al seleccionar al cliente del spinner se muestra la dirección y el teléfono
         spcliente.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item, valuesspinner));
         spcliente.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -92,22 +90,8 @@ public class ActividadPrincipal extends AppCompatActivity {
         SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
         f = df.format(c.getTime());
 
-        /*
-        // al presionar el boton agregar se crea la cabecera del pedido
-        btagregar = (Button)findViewById(R.id.button7);
-        btagregar.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                ContentValues values = new ContentValues();
-                values.put("id_cliente", clientes.get(spcliente.getSelectedItemPosition()).getIdCliente());
-                values.put("fecha", f);
-                db.insert("cabecera_pedido", null, values);
-                Toast.makeText(ActividadPrincipal.this, "Registrado!", Toast.LENGTH_SHORT).show();
-            }
-        });
-        */
-
-        // al presionar el boton siguiente pasa a la siguiente actividad
+        // mientras no seleccione un cliente y presione el boton, no podra pasar a la siguiente actividad
+        // al seleccionar un cliente y presionar el boton, se crea la cabecera del pedido y pasa a la siguiente actividad
         btsiguiente = (Button)findViewById(R.id.button2);
         btsiguiente.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,12 +99,19 @@ public class ActividadPrincipal extends AppCompatActivity {
                 if (spcliente.getSelectedItemPosition() == 0){
                     Toast.makeText(ActividadPrincipal.this, "Error: Debe seleccionar un cliente.", Toast.LENGTH_SHORT).show();
                 }else{
-                    Toast.makeText(ActividadPrincipal.this, "Cliente registrado con éxito!", Toast.LENGTH_SHORT).show();
                     // agrega la cabecera del pedido
-                    ContentValues values = new ContentValues();
-                    values.put("id_cliente", clientes.get(spcliente.getSelectedItemPosition()-1).getIdCliente());
-                    values.put("fecha", f);
-                    db.insert("cabecera_pedido", null, values);
+                    db.beginTransaction();
+                    try{
+                        ContentValues values = new ContentValues();
+                        values.put("id_cliente", clientes.get(spcliente.getSelectedItemPosition()-1).getIdCliente());
+                        values.put("fecha", f);
+                        db.insert("cabecera_pedido", null, values);
+                        db.setTransactionSuccessful();
+                    }finally {
+                        db.endTransaction();
+                        Toast.makeText(ActividadPrincipal.this, "Cliente registrado con éxito!", Toast.LENGTH_SHORT).show();
+                    }
+                    // pasa a la siguiente actividad
                     Intent intento = new Intent(ActividadPrincipal.this, ActividadPedido.class);
                     startActivity(intento);
                 }
